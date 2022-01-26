@@ -1,0 +1,119 @@
+#####################################################################################
+# Merge sourceBranch into featureBranch                                             #
+# On failure:                                                                       #
+# - create a PR                                                                     #
+# - Send an email to a distribution list                                            #
+#                                                                                   #
+# SECRETS REQUIRED:                                                                 #
+# - GITHUB_TOKEN (built-in)                                                         #
+#   - configured to use the account's GitHub token that's signed-in in the          #
+#   `git config` steps                                                              #
+# - EMAIL                                                                           #
+#   - the email address to use to send an email in the event of failures            #
+# - EMAIL_PASSWORD                                                                  #
+#   - the password for EMAIL                                                        #
+# - MERGE_PR_PAT                                                                    #
+#   - the Personal Access Token for the account used to create merge PRs            #
+#####################################################################################
+
+# TODO
+  # Setup Email Secrets with distro list account
+    # need distro setup 
+    # - Ark D. to follow up with list. 
+    # - Kenny D. to follow up with IT for creation and to get server parameters
+    # - Create GitHub Account with access to push to feature branches, create PRs (could use the distribution list email for account-level stuff)
+  
+  # Create strategy for merging develop into feature/* branches instead of a single branch 
+    # - possibly use "parent" script to call this one on array of featureBranches)
+      # - store array of branches matching pattern in var
+      # - loop through array, running this script on each branch
+    # - git branch | grep "<pattern>"
+      # - outputs a list of branches matching <pattern>
+        # - likely wouldn't work with PR strategy (more likely to silently fail or halt the grep operation and output an error on the step)
+        # - not sure how to use this in a var
+        # - can be used in combination with | xargs <git operation>
+          # - performs a git operation on each branch in the list
+          # - tried this with merge develop (git branch | grep "feature/" | xargs git merge develop)
+            # - ERROR: "merge: * - not something we can merge"
+          
+  # Create PR on merge failure
+name: Merge Or PR
+
+on:
+  workflow_call:
+    inputs:
+      featureBranch:
+        description: 'featureBranch: The name of the branch to update'
+        type: string
+        required: true
+      sourceBranch:
+        description: 'sourceBranch: The name of the branch ahead of featureBranch'
+        type: string
+        required: true
+        default: 'develop'      
+  workflow_dispatch:  
+    inputs:
+      featureBranch:
+        description: 'featureBranch: The name of the branch to update'
+        type: string
+        required: true
+      sourceBranch:
+        description: 'sourceBranch: The name of the branch ahead of featureBranch'
+        type: string
+        required: true
+        default: 'develop'
+        
+jobs:
+    MergeDevelopQuality:
+      runs-on: ubuntu-latest
+      steps:        
+        # checkout the repo
+        - uses: actions/checkout@v2
+        # attempt a fast forward merge, make a merge commit, and push (no PR for no conflict)
+        - id: mergeAttempt          
+          run: |
+                echo "merging ${{ (github.event.inputs || inputs).sourceBranch }} into ${{ (github.event.inputs || inputs).featureBranch }}"
+                #configure the git environment
+                git config --global user.email "kdubroff@nautilus.com" # this should probably be a distribution list so it's not on one owner
+                git config --global user.name "kdubroff"
+                git config --global pull.ff only
+                
+                git clone "https://$GITHUB_ACTOR:${{ secrets.GITHUB_TOKEN }}@github.com/kdubroff/test_gitflow_actions.git"
+                git fetch
+                cd test_gitflow_actions
+                git checkout ${{ (github.event.inputs || inputs).sourceBranch }}
+                git pull
+                git checkout ${{ (github.event.inputs || inputs).featureBranch }}
+                git pull
+                git merge ${{ (github.event.inputs || inputs).sourceBranch }} -m "auto merge of ${{ (github.event.inputs || inputs).sourceBranch }}"
+                git push                
+          # by default, workflows stop on error. This allows the following step to run if there's a merge conflict
+          continue-on-error: true
+          
+        # TODO: start PR from ${{ (github.event.inputs || inputs).featureBranch }} to ${{ (github.event.inputs || inputs).featureBranch }} if any conflicts
+        - id: startPRAndNotification
+          if: steps.mergeAttempt.outcome == 'failure'
+          
+        # send an email notifying of the failure
+          uses: dawidd6/action-send-mail@v3
+          with:
+            # Required mail server address:
+            server_address: smtp.gmail.com
+            # Required mail server port:
+            server_port: 465
+            # Optional (recommended): mail server username:
+            username: ${{secrets.EMAIL}}
+            # Optional (recommended) mail server password:
+            password: ${{secrets.EMAIL_PASSWORD}}
+            # Required mail subject:
+            subject: PR Created ${{ (github.event.inputs || inputs).sourceBranch }} -> ${{ (github.event.inputs || inputs).featureBranch }} auto-merge failed with conflicts!
+            # Required recipients' addresses:
+            to: kdubrof@nautilus.com # obiwan@example.com,yoda@example.com
+            # Required sender full name (address can be skipped):
+            from: Failed Auto Merges
+            # TODO: get actual key from PR action
+            body: | 
+              <p>
+                 Merge failed when attempting to merge ${{ (github.event.inputs || inputs).sourceBranch }} into ${{ (github.event.inputs || inputs).featureBranch }}.
+                 PR Created, <<a href="${{ github.outputs.prURL }}">view on GitHub</a>
+              </p>

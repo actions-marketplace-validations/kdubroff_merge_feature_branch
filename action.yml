@@ -18,15 +18,24 @@
 
 # TODO
   # Setup Email Secrets with distro list account
-    # - Create GitHub Account with access to push to feature branches, create PRs (could use the distribution list email for account-level stuff)
+    # - Create GitHub Account with access to push to feature branches, create PRs (use the distribution list email for account-level stuff)
   
   # Create strategy for merging develop into feature/* branches instead of a single branch 
     # call this using the matrix strategy to merge into multiple featureBranches
           
   # Create PR on merge failure
 name: Merge Or PR
-description: Attemt a fast-forward merge of sourceBranch -> featureBranch. On failure, create a PR
+description: Attempt a fast-forward merge of sourceBranch -> featureBranch. On failure, create a PR
 inputs:
+  token:
+    description: 'the GitHub PAT used to create PRs and perform commits'
+    type: string
+    required: true
+  gitHubUsername:
+    description: 'the username to display on the PR and commits'
+    type: string
+    required: true
+    default: Auto-Merge-Triage
   featureBranch:
     description: 'featureBranch: The name of the branch to update'
     type: string
@@ -36,6 +45,24 @@ inputs:
     type: string
     required: true
     default: 'develop'
+  emailAddress:
+    description: 'the email address used to login to GitHub and send email notifications'
+    type: string
+    required: true
+  emailPassword:
+    description: 'password used to login to your email server'
+    type: string
+    required: true    
+  emailPort:
+    description: 'the port number used to login to your email server'
+    type: int
+    required: true
+    default: 465
+  toEmailAddress:
+    description: 'the email address a notification email will be sent to'
+    type: string
+    required: true
+    
 runs:
   using: "composite"
   steps:        
@@ -46,11 +73,11 @@ runs:
       run: |
             echo "merging ${{ (github.event.inputs || inputs).sourceBranch }} into ${{ (github.event.inputs || inputs).featureBranch }}"
             #configure the git environment
-            git config --global user.email "kdubroff@nautilus.com" # this should probably be a distribution list so it's not on one owner
-            git config --global user.name "kdubroff"
+            git config --global user.email "${{ (github.event.inputs || inputs).emailAddress }}"
+            git config --global user.name "${{ (github.event.inputs || inputs).gitHubUsername }}"
             git config --global pull.ff only
 
-            git clone "https://$GITHUB_ACTOR:${{ secrets.GITHUB_TOKEN }}@github.com/kdubroff/test_gitflow_actions.git"
+            git clone "https://$GITHUB_ACTOR:${{ (github.event.inputs || inputs).token }}@github.com/kdubroff/test_gitflow_actions.git"
             git fetch
             cd test_gitflow_actions
             git checkout ${{ (github.event.inputs || inputs).sourceBranch }}
@@ -74,18 +101,18 @@ runs:
         # Required mail server port:
         server_port: 465
         # Optional (recommended): mail server username:
-        username: ${{secrets.EMAIL}}
+        username: ${{ (github.event.inputs || inputs).emailAddress }}
         # Optional (recommended) mail server password:
-        password: ${{secrets.EMAIL_PASSWORD}}
+        password: ${{ (github.event.inputs || inputs).emailPassword }}
         # Required mail subject:
         subject: PR Created ${{ (github.event.inputs || inputs).sourceBranch }} -> ${{ (github.event.inputs || inputs).featureBranch }} auto-merge failed with conflicts!
         # Required recipients' addresses:
-        to: kdubrof@nautilus.com # obiwan@example.com,yoda@example.com
+        to: ${{ (github.event.inputs || inputs).toEmailAddress }}
         # Required sender full name (address can be skipped):
-        from: Failed Auto Merges
+        from: ${{ (github.event.inputs || inputs).gitHubUsername }}
         # TODO: get actual key from PR action
         body: | 
           <p>
              Merge failed when attempting to merge ${{ (github.event.inputs || inputs).sourceBranch }} into ${{ (github.event.inputs || inputs).featureBranch }}.
-             PR Created, <<a href="${{ github.outputs.prURL }}">view on GitHub</a>
+             PR Created, <<a href="PR URL FROM PR STEP HERE">view on GitHub</a>
           </p>

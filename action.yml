@@ -69,7 +69,8 @@ runs:
     # checkout the repo
     - uses: actions/checkout@v2
     # attempt a fast forward merge, make a merge commit, and push (no PR for no conflict)
-    - id: mergeAttempt          
+    - id: mergeAttempt
+      shell: bash
       run: |
             echo "merging ${{ (github.event.inputs || inputs).sourceBranch }} into ${{ (github.event.inputs || inputs).featureBranch }}"
             #configure the git environment

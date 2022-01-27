@@ -88,7 +88,8 @@ runs:
             git merge ${{ (github.event.inputs || inputs).sourceBranch }} -m "auto merge of ${{ (github.event.inputs || inputs).sourceBranch }}"
             git push                
       # by default, workflows stop on error. This allows the following step to run if there's a merge conflict
-      continue-on-error: true
+      # UNSUP with composite actions!
+      # continue-on-error: true
 
     # TODO: start PR from ${{ (github.event.inputs || inputs).featureBranch }} to ${{ (github.event.inputs || inputs).featureBranch }} if any conflicts
     - id: startPRAndNotification

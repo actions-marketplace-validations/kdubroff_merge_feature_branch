@@ -1,19 +1,11 @@
 #####################################################################################
 # Merge sourceBranch into featureBranch                                             #
-# On failure:                                                                       #
-# - create a PR                                                                     #
-# - Send an email to a distribution list                                            #
 #                                                                                   #
-# SECRETS REQUIRED:                                                                 #
-# - GITHUB_TOKEN (built-in)                                                         #
-#   - configured to use the account's GitHub token that's signed-in in the          #
-#   `git config` steps                                                              #
-# - EMAIL                                                                           #
-#   - the email address to use to send an email in the event of failures            #
-# - EMAIL_PASSWORD                                                                  #
-#   - the password for EMAIL                                                        #
-# - MERGE_PR_PAT                                                                    #
-#   - the Personal Access Token for the account used to create merge PRs            #
+# Inputs Required:                                                                  #
+# - token (must be PAT)                                                             #
+# - emailAddress                                                                    #
+# - featureBranch                                                                   #
+# - sourceBranch                                                                    #
 #####################################################################################
 
 # TODO
@@ -23,8 +15,7 @@
   # Create strategy for merging develop into feature/* branches instead of a single branch 
     # call this using the matrix strategy to merge into multiple featureBranches
           
-  # Create PR on merge failure
-name: Merge Or PR
+name: Merge sourceBranch into featureBranch
 description: Attempt a fast-forward merge of sourceBranch -> featureBranch. On failure, create a PR
 inputs:
   token:
@@ -39,7 +30,7 @@ inputs:
     description: 'featureBranch: The name of the branch to update'
     type: string
     required: true
-  gitHubUsername:Q
+  gitHubUsername:
     description: 'the username to display on the PR and commits'
     type: string
     required: true

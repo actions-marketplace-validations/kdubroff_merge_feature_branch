@@ -64,6 +64,7 @@ runs:
             git pull
             git merge ${{ (github.event.inputs || inputs).sourceBranch }} -m "auto merge of ${{ (github.event.inputs || inputs).sourceBranch }}"
             git push
+    if: ${{ always() }} # run after step even on failure
     - id: post_process
       shell: bash
       run: echo "finished"

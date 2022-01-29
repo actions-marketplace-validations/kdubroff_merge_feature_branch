@@ -63,8 +63,8 @@ runs:
             git checkout ${{ (github.event.inputs || inputs).featureBranch }}
             git pull
             git merge ${{ (github.event.inputs || inputs).sourceBranch }} -m "auto merge of ${{ (github.event.inputs || inputs).sourceBranch }}"
-            git push
-    if: ${{ always() }} # run after step even on failure
+            git push    
     - id: post_process
+      if: ${{ always() }} # run after step even on failure
       shell: bash
       run: echo "finished"

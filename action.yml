@@ -43,9 +43,7 @@ inputs:
     
 runs:
   using: "composite"
-  steps:        
-    # checkout the repo
-    - uses: actions/checkout@v2
+  steps:
     # attempt a fast forward merge, make a merge commit, and push (no PR for no conflict)
     - id: mergeAttempt
       shell: bash

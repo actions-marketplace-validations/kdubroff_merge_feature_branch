@@ -64,3 +64,6 @@ runs:
             git pull
             git merge ${{ (github.event.inputs || inputs).sourceBranch }} -m "auto merge of ${{ (github.event.inputs || inputs).sourceBranch }}"
             git push
+    - id: post_process
+      shell: bash
+      run: echo "finished"

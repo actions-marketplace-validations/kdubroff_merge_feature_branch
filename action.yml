@@ -45,6 +45,7 @@ runs:
   using: "composite"
   steps:
     # attempt a fast forward merge, make a merge commit, and push (no PR for no conflict)
+    - uses: actions/checkout@v2.4.0
     - id: mergeAttempt
       shell: bash
       run: |

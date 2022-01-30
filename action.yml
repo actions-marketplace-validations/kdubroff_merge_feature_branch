@@ -69,4 +69,4 @@ runs:
       shell: bash
       run: |
         echo "finished"
-        echo ${{ steps.mergeAttempt.outcome }}
+        echo steps.mergeAttempt.outcome

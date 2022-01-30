@@ -64,7 +64,7 @@ runs:
             git pull
             git merge ${{ (github.event.inputs || inputs).sourceBranch }} -m "auto merge of ${{ (github.event.inputs || inputs).sourceBranch }}"
             git push  
-    if: ${{ failure() }} # run after step if it fails
+    - if: ${{ failure() }} # run after step if it fails
     - uses: kdubroff/pr_notify@320f4ec46711b1a2f81ca8b63e718adc1b902b68 
         with: 
           emailAddress: ${{ secrets.EMAIL }}

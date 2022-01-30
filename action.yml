@@ -70,9 +70,10 @@ runs:
             git push  
     - id: notify_if_failure
       if: ${{ failure() }} # run after step if it fails
-      uses: kdubroff/pr_notify@320f4ec46711b1a2f81ca8b63e718adc1b902b68 
+      uses: kdubroff/pr_notify@24df4ddb463be247f6ffe11a3ba0cdf07119b6ae 
       with: 
         emailAddress: ${{ (github.event.inputs || inputs).emailAddress }}
         emailPassword: ${{ (github.event.inputs || inputs).emailPassword }}
         toEmailAddress: kdubroff@nautilus.com          
         featureBranch: ${{ inputs.featureBranch }}
+        name: ${{ inputs.gitHubUsername }}

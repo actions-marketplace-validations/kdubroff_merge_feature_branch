@@ -26,6 +26,10 @@ inputs:
     description: 'the email address used to login to GitHub and send email notifications'
     type: string
     required: true
+  emailPassword:
+    description: 'the password used to login to your mail server'
+    type: string
+    required: true
   featureBranch:
     description: 'featureBranch: The name of the branch to update'
     type: string
@@ -68,7 +72,7 @@ runs:
       if: ${{ failure() }} # run after step if it fails
       uses: kdubroff/pr_notify@320f4ec46711b1a2f81ca8b63e718adc1b902b68 
       with: 
-        emailAddress: ${{ secrets.EMAIL }}
-        emailPassword: ${{ secrets.EMAIL_PASSWORD }}
+        emailAddress: ${{ (github.event.inputs || inputs).emailAddress }}
+        emailPassword: ${{ (github.event.inputs || inputs).emailPassword }}
         toEmailAddress: kdubroff@nautilus.com          
         featureBranch: ${{ fromJSON((github.event.inputs || inputs).featureBranch) }}

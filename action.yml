@@ -75,4 +75,4 @@ runs:
         emailAddress: ${{ (github.event.inputs || inputs).emailAddress }}
         emailPassword: ${{ (github.event.inputs || inputs).emailPassword }}
         toEmailAddress: kdubroff@nautilus.com          
-        featureBranch: ${{ fromJSON(inputs.featureBranch) }}
+        featureBranch: ${{ inputs.featureBranch }}

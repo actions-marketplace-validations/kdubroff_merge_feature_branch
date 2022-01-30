@@ -38,7 +38,7 @@ inputs:
     description: 'the username to display on the PR and commits'
     type: string
     required: true
-    default: 'Auto-Merge-Triage'
+    default: 'Auto Merge Triage'
   sourceBranch:
     description: 'sourceBranch: The name of the branch ahead of featureBranch'
     type: string

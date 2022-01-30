@@ -66,7 +66,10 @@ runs:
             git push    
     - id: post_process
       if: ${{ failure() }} # run after step if it fails
-      shell: bash
-      run: |
-        echo "finished"
-        echo steps.mergeAttempt.outcome
+      # TODO: PR
+      uses: kdubroff/pr_notify@320f4ec46711b1a2f81ca8b63e718adc1b902b68 
+        with: 
+          emailAddress: ${{ secrets.EMAIL }}
+          emailPassword: ${{ secrets.EMAIL_PASSWORD }}
+          toEmailAddress: kdubroff@nautilus.com          
+          featureBranch: ${{ fromJSON((github.event.inputs || inputs).featureBranch) }}

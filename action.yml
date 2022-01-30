@@ -68,5 +68,5 @@ runs:
       if: ${{ always() && steps.mergeAttempt.outcome != 'success' }} # run after step if it fails
       shell: bash
       run: |
-      echo "finished"
-      echo ${{ steps.mergeAttempt.outcome }}
+        echo "finished"
+        echo ${{ steps.mergeAttempt.outcome }}

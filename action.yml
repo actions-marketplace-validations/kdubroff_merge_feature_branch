@@ -82,7 +82,7 @@ runs:
         
     - id: notify_if_failure
       if: ${{ failure() }} # run after step if it fails
-      uses: kdubroff/pr_notify@d3898226aee9192e2973512179ccd72b098c6c31 
+      uses: kdubroff/pr_notify@193585adbf65e3b6d914552a96b30f12d6deb259 
       with: 
         emailAddress: ${{ (github.event.inputs || inputs).emailAddress }}
         emailPassword: ${{ (github.event.inputs || inputs).emailPassword }}

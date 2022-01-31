@@ -14,6 +14,10 @@
   
   # Create strategy for merging develop into feature/* branches instead of a single branch 
     # call this using the matrix strategy to merge into multiple featureBranches
+    
+branding:
+  icon: 'git-merge'
+  color: 'purple'
           
 name: Merge sourceBranch into featureBranch
 description: Attempt a fast-forward merge of sourceBranch -> featureBranch. On failure, create a PR

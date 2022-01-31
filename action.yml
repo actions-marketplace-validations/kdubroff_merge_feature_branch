@@ -102,4 +102,4 @@ runs:
         toEmailAddress: ${{ (github.event.inputs || inputs).toEmailAddress }}
         featureBranch: ${{ (github.event.inputs || inputs).featureBranch }}
         name: ${{ (github.event.inputs || inputs).gitHubUsername }}
-        prURL: ${{ steps.create_pr.outputs. }}
+        prURL: ${{ steps.create_pr.outputs.pr_url }}

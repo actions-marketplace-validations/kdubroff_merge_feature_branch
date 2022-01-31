@@ -18,10 +18,6 @@
 name: Merge sourceBranch into featureBranch
 description: Attempt a fast-forward merge of sourceBranch -> featureBranch. On failure, create a PR
 inputs:
-  targetRepo:
-    description: 'The repository to attempt the merge or create a PR in. This should be in `$GITHUB_ACTOR:token@github.com/user/repo.git` format'
-    type: string
-    required: true
   token:
     description: 'the GitHub PAT used to create PRs and perform commits'
     type: string

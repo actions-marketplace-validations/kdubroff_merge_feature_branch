@@ -65,7 +65,7 @@ runs:
             # This should be in `$GITHUB_ACTOR:token@github.com/user/repo.git` format
             # ex: https://$GITHUB_ACTOR:${{ (github.event.inputs || inputs).token }}@github.com/kdubroff/test_gitflow_actions.git
             #git clone ${{ (github.event.inputs || inputs).targetRepo }}
-            git fetch
+            git fetch --unshallow # unshallow due to fetch depth from checkout action
             #cd test_gitflow_actions
             git checkout ${{ (github.event.inputs || inputs).sourceBranch }}
             git pull

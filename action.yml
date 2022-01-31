@@ -18,6 +18,10 @@
 name: Merge sourceBranch into featureBranch
 description: Attempt a fast-forward merge of sourceBranch -> featureBranch. On failure, create a PR
 inputs:
+  targetRepo:
+    description: 'The repository to attempt the merge or create a PR in. This should be in `$GITHUB_ACTOR:token@github.com/user/repo.git` format'
+    type: string
+    required: true
   token:
     description: 'the GitHub PAT used to create PRs and perform commits'
     type: string
@@ -58,8 +62,9 @@ runs:
             git config --global user.email "${{ (github.event.inputs || inputs).emailAddress }}"
             git config --global user.name "${{ (github.event.inputs || inputs).gitHubUsername }}"
             git config --global pull.ff only
-
-            git clone "https://$GITHUB_ACTOR:${{ (github.event.inputs || inputs).token }}@github.com/kdubroff/test_gitflow_actions.git"
+            # This should be in `$GITHUB_ACTOR:token@github.com/user/repo.git` format
+            # ex: https://$GITHUB_ACTOR:${{ (github.event.inputs || inputs).token }}@github.com/kdubroff/test_gitflow_actions.git
+            git clone ${{ (github.event.inputs || inputs).targetRepo }}
             git fetch
             cd test_gitflow_actions
             git checkout ${{ (github.event.inputs || inputs).sourceBranch }}

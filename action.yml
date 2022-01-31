@@ -77,6 +77,10 @@ runs:
             git pull
             git merge ${{ (github.event.inputs || inputs).sourceBranch }} -m "auto merge of ${{ (github.event.inputs || inputs).sourceBranch }}"
             git push
+    - id: abort_merge
+      if: ${{ failure() }}
+      run: git merge --abort
+            
     - id: create_pr
       if: ${{ failure() }}
       uses: repo-sync/pull-request@v2
@@ -90,7 +94,7 @@ runs:
         github_token: ${{ (github.event.inputs || inputs).token }}
         
     - id: notify_if_failure
-      if: ${{ failure() }} # run after step if it fails
+      if: ${{ failure() }}
       uses: kdubroff/pr_notify@v1.0a 
       with: 
         emailAddress: ${{ (github.event.inputs || inputs).emailAddress }}
@@ -98,3 +102,4 @@ runs:
         toEmailAddress: ${{ (github.event.inputs || inputs).toEmailAddress }}
         featureBranch: ${{ (github.event.inputs || inputs).featureBranch }}
         name: ${{ (github.event.inputs || inputs).gitHubUsername }}
+        prURL: ${{ steps.create_pr.outputs. }}

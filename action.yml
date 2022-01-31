@@ -44,6 +44,10 @@ inputs:
     type: string
     required: true
     default: 'develop'
+  toEmailAddress:
+    description: 'the email address to send notifications to'
+    type: string
+    required: true
     
 runs:
   using: "composite"
@@ -87,6 +91,6 @@ runs:
       with: 
         emailAddress: ${{ (github.event.inputs || inputs).emailAddress }}
         emailPassword: ${{ (github.event.inputs || inputs).emailPassword }}
-        toEmailAddress: kdubroff@nautilus.com          
+        toEmailAddress: ${{ (github.event.inputs || inputs).toEmailAddress }}
         featureBranch: ${{ (github.event.inputs || inputs).featureBranch }}
         name: ${{ (github.event.inputs || inputs).gitHubUsername }}

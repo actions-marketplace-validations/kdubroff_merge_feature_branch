@@ -1,5 +1,5 @@
 # merge_feature_branch
-Merge source branch into feature branch and push. Create PR if conflicts
+Merge source branch into feature branch and push. Create a PR and send an email notification if there are conflicts.
 
 inputs: 
 

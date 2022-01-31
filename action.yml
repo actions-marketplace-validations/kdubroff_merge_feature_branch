@@ -64,9 +64,9 @@ runs:
             git config --global pull.ff only
             # This should be in `$GITHUB_ACTOR:token@github.com/user/repo.git` format
             # ex: https://$GITHUB_ACTOR:${{ (github.event.inputs || inputs).token }}@github.com/kdubroff/test_gitflow_actions.git
-            git clone ${{ (github.event.inputs || inputs).targetRepo }}
+            #git clone ${{ (github.event.inputs || inputs).targetRepo }}
             git fetch
-            cd test_gitflow_actions
+            #cd test_gitflow_actions
             git checkout ${{ (github.event.inputs || inputs).sourceBranch }}
             git pull
             git checkout ${{ (github.event.inputs || inputs).featureBranch }}
